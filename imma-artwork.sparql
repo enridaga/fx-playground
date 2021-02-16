@@ -1,0 +1,109 @@
+prefix fx: <urn:facade-x:ns#>
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix xhtml: <http://www.w3.org/1999/xhtml#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+PREFIX spice: <https://w3id.org/spice/imma/>
+PREFIX arco: <https://w3id.org/arco/ontology/arco/> 
+PREFIX arco-cd: <https://w3id.org/arco/ontology/context-description/> 
+PREFIX arco-core: <https://w3id.org/arco/ontology/core/> 
+PREFIX dc: <http://purl.org/dc/elements/1.1/> 
+PREFIX schema: <http://schema.org/> 
+
+
+CONSTRUCT {
+	?artefactEntity a schema:CreativeWork ;
+		dc:source ?artworkUrl ;
+		arco-cd:hasInventory ?artworkCatalogueID ;
+		dc:description ?artworkDescription ;
+		schema:creditText ?artworkCreditLine ;
+		schema:size ?artworkDimensions ;
+		schema:maintainer  <https://w3id.org/spice/institute/imma> ;
+		schema:material ?artworkMedium ;
+		schema:version ?artworkEdition 
+		.
+} WHERE {
+	VALUES ( ?artworkNickname ) { ( "rhythm-0") } .
+	# 
+	BIND( IRI ( CONCAT( "https://imma.ie/collection/", ?artworkNickname )) AS ?artworkUrl ) .
+	# 
+	BIND ( IRI( CONCAT("facade-x:media-type=text/html,location=", "https://imma.ie/collection/", ?artworkNickname) ) as ?artworkFx ) .
+	# 
+	BIND ( IRI( CONCAT("https://w3id.org/spice/imma/artefact/", ?artworkNickname) ) as ?artefactEntity ) .
+	# 
+	#	BIND ( IRI( CONCAT("https://w3id.org/spice/imma/documentation/", ?artworkNickname) ) as ?artefactDocumentation ) .
+	# 
+	SERVICE ?artworkFx {{
+		[] xhtml:id "artwork-content" ;
+			?i0 [
+				rdf:type xhtml:p ;
+				rdf:_1 ?artworkDescription
+			]
+		.
+		} UNION {
+		[] rdf:type xhtml:tr ;
+			?i1 [
+				rdf:type xhtml:td ;
+				rdf:_1 "Medium" ;
+			] ;
+			?i2 [
+				rdf:type xhtml:td ;
+				rdf:_1 ?artworkMedium ;
+			] 
+		.
+		} UNION {
+		[] rdf:type xhtml:tr ;
+			?i1 [
+				rdf:type xhtml:td ;
+				rdf:_1 "Dimensions" ;
+			] ;
+			?i2 [
+				rdf:type xhtml:td ;
+				rdf:_1 ?artworkDimensions ;
+			] 
+		.
+		} UNION {
+		[] rdf:type xhtml:tr ;
+			?i1 [
+				rdf:type xhtml:td ;
+				rdf:_1 "Credit Line" ;
+			] ;
+			?i2 [
+				rdf:type xhtml:td ;
+				rdf:_1 ?artworkCreditLine ;
+			] 
+		.
+		} UNION {
+		[] rdf:type xhtml:tr ;
+			?i1 [
+				rdf:type xhtml:td ;
+				rdf:_1 "Edition" ;
+			] ;
+			?i2 [
+				rdf:type xhtml:td ;
+				rdf:_1 ?artworkEdition ;
+			] 
+		.
+		} UNION {
+		[] rdf:type xhtml:tr ;
+			?i1 [
+				rdf:type xhtml:td ;
+				rdf:_1 "Item Number" ;
+			] ;
+			?i2 [
+				rdf:type xhtml:td ;
+				rdf:_1 ?artworkCatalogueID ;
+			] 
+		.
+		} UNION {
+		[] xhtml:class "tags" ;
+			?i1 [
+				rdf:type xhtml:li ;
+				rdf:_1 [
+					?iii ?tag ] ;
+			] 		
+		.
+	}}
+	.
+}

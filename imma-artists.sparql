@@ -1,0 +1,34 @@
+prefix fx: <urn:facade-x:ns#>
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix xhtml: <http://www.w3.org/1999/xhtml#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+PREFIX spice: <https://w3id.org/spice/imma/>
+PREFIX arco: <https://w3id.org/arco/ontology/arco/> 
+PREFIX arco-cd: <https://w3id.org/arco/ontology/context-description/> 
+PREFIX arco-core: <https://w3id.org/arco/ontology/core/> 
+PREFIX dc: <http://purl.org/dc/elements/1.1/> 
+PREFIX schema: <http://schema.org/> 
+
+CONSTRUCT {
+	?artistEntity dc:source ?artistUrl ; 
+		dc:name ?artistName; 
+		dc:date ?now
+}			
+# 
+# 
+#select *	
+WHERE {
+    SERVICE <facade-x:media-type=text/html,html.selector=#az-group,location=https://imma.ie/artists/> {
+        [] xhtml:data-image ?dataImage ;
+			rdf:_1 [
+			   xhtml:href ?artistUrl ;
+			   rdf:_1 [rdf:_1 ?artistNickname ] ;
+			   rdf:_2 ?artistName
+			].
+    } .
+
+	BIND ( IRI( CONCAT("https://w3id.org/spice/imma/agent/", ?artistNickname) ) as ?artistEntity ) .
+	BIND ( NOW() as ?now ) .
+}
